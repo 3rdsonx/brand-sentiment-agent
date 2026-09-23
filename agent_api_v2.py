@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 from nimble_python import Nimble
 
 from config import SKILL
+from dashboard import open_dashboard, write_dashboard
 from schema import ReviewItem, SentimentResult
 from sentiment_model import ESCALATION_THRESHOLD_PCT, MIN_SAMPLE_SIZE, build_result
 
@@ -111,6 +112,8 @@ def main() -> int:
     parser.add_argument("--effort", default="high", choices=["low", "medium", "high", "x-high", "max"])
     parser.add_argument("--poll-interval", type=int, default=15)
     parser.add_argument("--json", metavar="PATH", default=None)
+    parser.add_argument("--out-dir", default="output")
+    parser.add_argument("--no-dashboard", action="store_true", help="Skip writing/opening the HTML dashboard")
     args = parser.parse_args()
 
     raw = run_research(args.brand, args.window_days, effort=args.effort, poll_interval=args.poll_interval)
@@ -120,6 +123,10 @@ def main() -> int:
         with open(args.json, "w") as fh:
             json.dump(raw, fh, indent=2, default=str)
         print(f"\nWrote {args.json}")
+    if not args.no_dashboard:
+        dashboard_path = write_dashboard(result, args.out_dir)
+        print(f"Wrote {dashboard_path}")
+        open_dashboard(dashboard_path)
     return 0
 
 

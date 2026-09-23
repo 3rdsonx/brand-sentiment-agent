@@ -51,6 +51,10 @@ uv run python agent_api_v2.py "Chipotle" --window-days 90
 `LLM_MODEL` is provider-agnostic via `init_chat_model`: `openai:gpt-5.1` (default),
 `anthropic:claude-sonnet-5`, ... Install the matching provider package.
 
+Both entrypoints also write `dashboard.html` to `./output` (or `--out-dir`) and open it
+in the default browser (skip with `--no-dashboard`): current-vs-prior negative volume
+per theme with escalation flagged, and the full theme table.
+
 ## Files
 
 - `schema.py` - `ReviewItem`, `SentimentExtractionBatch` (the agent's raw output),
@@ -63,6 +67,8 @@ uv run python agent_api_v2.py "Chipotle" --window-days 90
 - `agent.py` - the Pattern A LangChain agent and its `nimble_search` tool.
 - `agent_api_v2.py` - the Pattern B driver.
 - `run.py` - Pattern A CLI and the shared result printer.
+- `dashboard.py` - writes the self-contained `dashboard.html` artifact both entrypoints
+  open after a run.
 
 ## Example
 

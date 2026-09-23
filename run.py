@@ -12,6 +12,7 @@ import os
 import sys
 
 from agent import analyze
+from dashboard import open_dashboard, write_dashboard
 from schema import SentimentResult
 
 
@@ -48,6 +49,8 @@ def main() -> int:
     parser.add_argument("--window-days", type=int, default=90, help="Size of the current/prior comparison window")
     parser.add_argument("--model", default=None, help="Override LLM_MODEL, e.g. openai:gpt-4o or anthropic:claude-sonnet-5")
     parser.add_argument("--json", metavar="PATH", default=None)
+    parser.add_argument("--out-dir", default="output")
+    parser.add_argument("--no-dashboard", action="store_true", help="Skip writing/opening the HTML dashboard")
     args = parser.parse_args()
 
     result = analyze(args.brand, model=args.model, window_days=args.window_days)
@@ -58,6 +61,11 @@ def main() -> int:
         with open(args.json, "w") as fh:
             json.dump(result.model_dump(), fh, indent=2)
         print(f"\nWrote {args.json}")
+
+    if not args.no_dashboard:
+        dashboard_path = write_dashboard(result, args.out_dir)
+        print(f"Wrote {dashboard_path}")
+        open_dashboard(dashboard_path)
     return 0
 
 
