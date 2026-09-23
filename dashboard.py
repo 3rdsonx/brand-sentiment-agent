@@ -108,7 +108,7 @@ _TEMPLATE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sentiment triage &mdash; {brand}</title>
 <style>
-  .viz-root {{
+  :root {{
     color-scheme: light;
     --surface-1:      #fcfcfb;
     --page:           #f9f9f7;
@@ -125,7 +125,7 @@ _TEMPLATE = """<!doctype html>
     --delta-warning:   #a86400;
   }}
   @media (prefers-color-scheme: dark) {{
-    :root:where(:not([data-theme="light"])) .viz-root {{
+    :root:where(:not([data-theme="light"])) {{
       color-scheme: dark;
       --surface-1:      #1a1a19;
       --page:           #0d0d0d;
@@ -141,6 +141,22 @@ _TEMPLATE = """<!doctype html>
       --delta-good:      #0ca30c;
       --delta-warning:   #eda100;
     }}
+  }}
+  :root[data-theme="dark"] {{
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page:           #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --grid:           #2c2c2a;
+    --border:         rgba(255,255,255,0.10);
+    --series-current: #3987e5;
+    --series-prior:   #52514e;
+    --status-critical: #e66767;
+    --status-critical-text: #ffb3b3;
+    --delta-good:      #0ca30c;
+    --delta-warning:   #eda100;
   }}
   * {{ box-sizing: border-box; }}
   html, body {{ margin: 0; background: var(--page); }}
