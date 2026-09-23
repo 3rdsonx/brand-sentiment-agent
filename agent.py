@@ -97,11 +97,16 @@ def _make_search_tool():
             kwargs["start_date"] = start_date
         elif time_range:
             kwargs["time_range"] = time_range
+        scope = f" [{', '.join(include_domains)}]" if include_domains else ""
+        print(f"  nimble search: {query!r}{scope}", flush=True)
         try:
             resp = client.search(**kwargs)
         except Exception as exc:
+            print(f"    -> error: {exc}", flush=True)
             return [{"error": f"{type(exc).__name__}: {exc}"}]
-        return _compact(resp.results, query, full_content, CONTENT_CHAR_CAP)
+        out = _compact(resp.results, query, full_content, CONTENT_CHAR_CAP)
+        print(f"    -> {len(out)} result(s)", flush=True)
+        return out
 
     return nimble_search
 
@@ -132,6 +137,7 @@ def analyze(
     """Run the agent end to end and return the triage result."""
     today = dt.date.today()
     agent = build_agent(brand, window_days, model, today.isoformat())
+    print(f"Starting agent: finding and classifying sentiment for {brand}...", flush=True)
     result = agent.invoke(
         {
             "messages": [
@@ -147,6 +153,7 @@ def analyze(
         },
         {"recursion_limit": DEFAULT_RECURSION_LIMIT},
     )
+    print("Agent finished classifying items. Computing triage result...", flush=True)
     batch: SentimentExtractionBatch = result["structured_response"]
     return build_result(
         brand, batch.items, batch.canonical_themes, today, window_days, min_sample_size, escalation_threshold_pct
